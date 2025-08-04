@@ -1,10 +1,10 @@
-ARG MONERO_TAG="v0.18.4.1"
+ARG BUILD_TAG="v0.18.4.1"
 # === Stage 1: Download, verify and extract ===
 FROM debian:bookworm-slim AS builder
 
-ARG MONERO_TAG
+ARG BUILD_TAG
 ARG monero_url="https://downloads.getmonero.org/cli/"
-ARG monero_archive="monero-linux-x64-$MONERO_TAG.tar.bz2"
+ARG monero_archive="monero-linux-x64-$BUILD_TAG.tar.bz2"
 ARG monero_hashes="https://getmonero.org/downloads/hashes.txt"
 
 RUN apt update && apt-get install -y \
@@ -33,7 +33,7 @@ RUN ln -s monero-wallet-cli wallet && \
 
 # === Stage 2: Minimal runtime ===
 FROM scratch
-ARG MONERO_TAG
+ARG BUILD_TAG
 
 COPY --from=builder /out/bin /bin
 COPY --from=builder /out/lib /lib
@@ -45,7 +45,7 @@ LABEL org.opencontainers.image.title="monero-wallet-zero" \
       org.opencontainers.image.url="https://ghcr.io/lanjelin/monero-wallet-zero" \
       org.opencontainers.image.source="https://github.com/Lanjelin/monero-wallet-zero" \
       org.opencontainers.image.documentation="https://github.com/Lanjelin/monero-wallet-zero" \
-      org.opencontainers.image.version="$MONERO_TAG" \
+      org.opencontainers.image.version="$BUILD_TAG" \
       org.opencontainers.image.authors="Lanjelin" \
       org.opencontainers.image.licenses="GPL-3"
 
