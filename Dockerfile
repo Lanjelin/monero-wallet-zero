@@ -18,7 +18,7 @@ RUN wget "$monero_url$monero_archive" && \
     wget https://raw.githubusercontent.com/monero-project/monero/master/utils/gpg_keys/binaryfate.asc && \
     gpg --import binaryfate.asc && \
     gpg --verify hashes.txt || { echo '❌ Bad signature!'; exit 1; } && echo '✅ Signature OK' && \
-    grep -E '^[a-f0-9]{64}  monero-linux-x64-v0.18.4.1.tar.bz2$' hashes.txt | sha256sum --check || { echo '❌ Hash mismatch!'; exit 1; } && echo '✅ Hash OK' && \
+    grep -E "^[a-f0-9]{64}  monero-linux-x64-${BUILD_TAG}\.tar\.bz2$" hashes.txt | sha256sum --check || { echo '❌ Hash mismatch!'; exit 1; } && echo '✅ Hash OK' && \
     tar --strip-components=1 -xvf "$monero_archive"
 
 COPY extract-deps.sh /build/extract-deps.sh
