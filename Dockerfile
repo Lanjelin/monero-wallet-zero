@@ -3,9 +3,9 @@ ARG BUILD_TAG="v0.18.4.1"
 FROM debian:bookworm-slim AS builder
 
 ARG BUILD_TAG
-ARG monero_url="https://downloads.getmonero.org/cli/"
-ARG monero_archive="monero-linux-x64-$BUILD_TAG.tar.bz2"
-ARG monero_hashes="https://getmonero.org/downloads/hashes.txt"
+ARG MONERO_URL="https://downloads.getmonero.org/cli/"
+ARG MONERO_ARCHIVE="monero-linux-x64-$BUILD_TAG.tar.bz2"
+ARG MONERO_HASHES="https://getmonero.org/downloads/hashes.txt"
 
 RUN apt update && apt-get install -y \
       wget ca-certificates binutils gpg dirmngr gnupg bzip2 && \
@@ -13,13 +13,13 @@ RUN apt update && apt-get install -y \
 
 WORKDIR /build
 
-RUN wget "$monero_url$monero_archive" && \
-    wget "$monero_hashes" && \
+RUN wget "$MONERO_URL$MONERO_ARCHIVE" && \
+    wget "$MONERO_HASHES" && \
     wget https://raw.githubusercontent.com/monero-project/monero/master/utils/gpg_keys/binaryfate.asc && \
     gpg --import binaryfate.asc && \
     gpg --verify hashes.txt || { echo '❌ Bad signature!'; exit 1; } && echo '✅ Signature OK' && \
     grep -E "^[a-f0-9]{64}  monero-linux-x64-${BUILD_TAG}\.tar\.bz2$" hashes.txt | sha256sum --check || { echo '❌ Hash mismatch!'; exit 1; } && echo '✅ Hash OK' && \
-    tar --strip-components=1 -xvf "$monero_archive"
+    tar --strip-components=1 -xvf "$MONERO_ARCHIVE"
 
 COPY extract-deps.sh /build/extract-deps.sh
 RUN chmod +x extract-deps.sh && \
